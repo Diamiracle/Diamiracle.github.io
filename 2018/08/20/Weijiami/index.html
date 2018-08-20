@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8">
   
-  <title>MachineLearning | Hexo</title>
+  <title>伪加密 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
     <meta name="keywords" content="Diamiracle,Diamiracle's Blog" />
   
-  <meta name="description" content="MinHow-This is a summary">
-<meta name="keywords" content="First,Second">
+  <meta name="description" content="这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。 题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。 用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF和abclistmenuitemicon.xml。由">
+<meta name="keywords" content="zip - 伪加密">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MachineLearning">
-<meta property="og:url" content="http://diamiracle.github.io/2018/08/12/MachineLearning/index.html">
+<meta property="og:title" content="伪加密">
+<meta property="og:url" content="http://diamiracle.github.io/2018/08/20/Weijiami/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="MinHow-This is a summary">
+<meta property="og:description" content="这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。 题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。 用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF和abclistmenuitemicon.xml。由">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-12T09:46:09.547Z">
+<meta property="og:updated_time" content="2018-08-20T13:55:25.558Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MachineLearning">
-<meta name="twitter:description" content="MinHow-This is a summary">
+<meta name="twitter:title" content="伪加密">
+<meta name="twitter:description" content="这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。 题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。 用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF和abclistmenuitemicon.xml。由">
   
   
     <link rel="icon" href="/favicon.ico">
@@ -110,20 +110,20 @@
     </div>
 </header>
       <div class="outer">
-        <section id="main" class="body-wrap"><article id="post-MachineLearning" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main" class="body-wrap"><article id="post-Weijiami" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="post-title" itemprop="name">
-      MachineLearning
+      伪加密
     </h1>
     <div class="post-title-bar">
       <ul>
           
         <li>
-          <i class="fa fa-calendar"></i>  2018-08-12
+          <i class="fa fa-calendar"></i>  2018-08-20
         </li>
         <li>
           <i class="fa fa-eye"></i>
@@ -139,12 +139,34 @@
     <div class="article-entry post-content" itemprop="articleBody">
       
             
-            <p> MinHow-This is a summary<br><a id="more"></a></p>
+            <p>这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。</p>
+<p>题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。</p>
+<p>用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF<em>和abclistmenuitemicon.xml</em>。由于之前也没自己动手去掉过伪加密，现在又从头开始学zip压缩文件的二进制结构，和一些之前有过的伪加密的文章。发现伪加密一般是通过修改PK 01 02 后面第五个字节开始的后面的两个字节来实现的，于是直接搜索定位两个伪加密文件在二进制文件中的位置。</p>
+<p>C:D5E0h: 00 63 6C 61 73 73 65 73 2E 64 65 78 50 4B 01 02  .classes.dexPK..<br>C:D5F0h: 14 00 14 00 09 01 08 00 F3 95 26 49 63 DE 38 A0  ……..髸&amp;Ic??<br>C:D600h: 66 01 00 00 B0 02 00 00 26 00 00 00 00 00 00 00  f…?..&amp;…….<br>C:D610h: 00 00 00 00 00 00 A3 4D 0C 00 72 65 73 2F 6C 61  ……..res/la<br>C:D620h: 79 6F 75 74 2F 61 62 63 5F 6C 69 73 74 5F 6D 65  yout/abc_list_me<br>C:D630h: 6E 75 5F 69 74 65 6D 5F 69 63 6F 6E 2E 78 6D 6C  nu_item_icon.xml<br>C:D640h: 50 4B 05 06 00 00 00 00 57 01 57 01 E3 86 00 00  PK……W.W.銌..<br>C:D650h: 5D 4F 0C 00 00 00                                ]O….<br>把CD5F5-CD5F6改为08 08</p>
+<p>C:4F50h: 08 63 DE 38 A0 66 01 00 00 B0 02 00 00 50 4B 01  .c?爁…?..PK.<br>C:4F60h: 02 14 00 14 00 09 01 08 00 F2 95 26 49 FE 05 E1  ………驎&amp;I??<br>C:4F70h: E6 E1 25 00 00 4A 90 00 00 14 00 04 00 00 00 00  驷%..J?……..<br>C:4F80h: 00 00 00 00 00 00 00 00 00 00 00 4D 45 54 41 2D  ………..META-<br>C:4F90h: 49 4E 46 2F 4D 41 4E 49 46 45 53 54 2E 4D 46 FE  INF/MANIFEST.MF?<br>C:4FA0h: CA 00 00 50 4B 01 02 14 00 14 00 08 08 08 00 F2  ?.PK……….?<br>把C4F66-C4F67改为08 08就可以去掉伪加密了</p>
+<p>然后就可以正常反编译了。可以看到flag是直接硬编码到代码中的。</p>
+<h1 id="virtual-methods"><a href="#virtual-methods" class="headerlink" title="virtual methods"></a>virtual methods</h1><p>.method protected onCreate(Landroid/os/Bundle;)V<br>    .locals 2<br>    .param p1, “savedInstanceState”    # Landroid/os/Bundle;</p>
+<pre><code>.prologue
+.line 12
+invoke-super {p0, p1}, Landroid/app/Activity;-&gt;onCreate(Landroid/os/Bundle;)V
+
+.line 13
+const v1, 0x7f030018
+
+invoke-virtual {p0, v1}, Lcom/example/crackme1/MainActivity;-&gt;setContentView(I)V
+
+.line 14
+const-string v0, &quot;flag{galfasisiht}&quot;
+
+.line 15
+.local v0, &quot;flag&quot;:Ljava/lang/String;
+return-void
+</code></pre><p>.end method<br>最后发现其实不用去掉伪加密就可以了，因为直接可以解压出classes.dex文件，然后反编译dex就可以了，但是整个过程还是挺有收获的。</p>
 
             <div class="post-copyright">
     <div class="content">
-        <p>最后更新： 2018年08月12日 17:46</p>
-        <p>原始链接： <a class="post-url" href="/2018/08/12/MachineLearning/" title="MachineLearning">http://diamiracle.github.io/2018/08/12/MachineLearning/</a></p>
+        <p>最后更新： 2018年08月20日 21:55</p>
+        <p>原始链接： <a class="post-url" href="/2018/08/20/Weijiami/" title="伪加密">http://diamiracle.github.io/2018/08/20/Weijiami/</a></p>
         <footer>
             <a href="http://diamiracle.github.io">
                 <img src="/images/logo.png" alt="John Doe">
@@ -201,7 +223,7 @@
     <div class="post-share-list" id="share-list">
         <ul class="share-icons">
           <li>
-            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/12/MachineLearning/&title=《MachineLearning》 — Hexo&pic=images/banner.jpg" data-title="微博">
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/20/Weijiami/&title=《伪加密》 — Hexo&pic=images/banner.jpg" data-title="微博">
               <i class="fa fa-weibo"></i>
             </a>
           </li>
@@ -211,22 +233,22 @@
             </a>
           </li>
           <li>
-            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/12/MachineLearning/&title=《MachineLearning》 — Hexo&source= MinHow-This is a summary" data-title="QQ">
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/20/Weijiami/&title=《伪加密》 — Hexo&source=" data-title="QQ">
               <i class="fa fa-qq"></i>
             </a>
           </li>
           <li>
-            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/12/MachineLearning/" data-title="Facebook">
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/20/Weijiami/" data-title="Facebook">
               <i class="fa fa-facebook"></i>
             </a>
           </li>
           <li>
-            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MachineLearning》 — Hexo&url=http://diamiracle.github.io/2018/08/12/MachineLearning/&via=http://diamiracle.github.io" data-title="Twitter">
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《伪加密》 — Hexo&url=http://diamiracle.github.io/2018/08/20/Weijiami/&via=http://diamiracle.github.io" data-title="Twitter">
               <i class="fa fa-twitter"></i>
             </a>
           </li>
           <li>
-            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/12/MachineLearning/" data-title="Google+">
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/20/Weijiami/" data-title="Google+">
               <i class="fa fa-google-plus"></i>
             </a>
           </li>
@@ -236,7 +258,7 @@
 <div class="post-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;" id="wxShare-close">×</a>
     <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/12/MachineLearning/" alt="微信分享二维码">
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/20/Weijiami/" alt="微信分享二维码">
 </div>
 
 <div class="mask"></div>
@@ -248,9 +270,7 @@
   <li class="article-footer-tags">
     <i class="fa fa-tags"></i>
       
-    <a href="/tags/First/" class="color1">First</a>
-      
-    <a href="/tags/Second/" class="color2">Second</a>
+    <a href="/tags/zip-伪加密/" class="color5">zip - 伪加密</a>
       
   </li>
 
@@ -261,19 +281,20 @@
 </article>
 
 
+    <aside class="post-toc-pos post-toc-top" id="post-toc">
+        <nav class="post-toc-wrap">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#virtual-methods"><span class="post-toc-text">virtual methods</span></a></li></ol>
+        </nav>
+    </aside>
+    
 
 <nav id="article-nav">
   
-    <a href="/2018/08/14/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
-
-      <span class="article-nav-title">
-        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
-        
-          Hello World
-        
-      </span>
-    </a>
   
+    <a href="/2018/08/14/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">Hello World</span>
+      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+    </a>
   
 </nav>
 

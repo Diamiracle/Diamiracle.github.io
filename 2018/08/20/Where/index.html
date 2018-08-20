@@ -3,22 +3,22 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Hello World | Hexo</title>
+  <title>Where解题思路 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
     <meta name="keywords" content="Diamiracle,Diamiracle's Blog" />
   
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+  <meta name="description" content="1.简介该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;amp;id=76 。这里我主要说一下dex修复问题。 2.步骤assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://diamiracle.github.io/2018/08/14/hello-world/index.html">
+<meta property="og:title" content="Where解题思路">
+<meta property="og:url" content="http://diamiracle.github.io/2018/08/20/Where/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="1.简介该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;amp;id=76 。这里我主要说一下dex修复问题。 2.步骤assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-20T14:22:56.654Z">
+<meta property="og:updated_time" content="2018-08-20T14:43:03.877Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="twitter:title" content="Where解题思路">
+<meta name="twitter:description" content="1.简介该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;amp;id=76 。这里我主要说一下dex修复问题。 2.步骤assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在">
   
   
     <link rel="icon" href="/favicon.ico">
@@ -109,20 +109,20 @@
     </div>
 </header>
       <div class="outer">
-        <section id="main" class="body-wrap"><article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main" class="body-wrap"><article id="post-Where" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="post-title" itemprop="name">
-      Hello World
+      Where解题思路
     </h1>
     <div class="post-title-bar">
       <ul>
           
         <li>
-          <i class="fa fa-calendar"></i>  2018-08-14
+          <i class="fa fa-calendar"></i>  2018-08-20
         </li>
         <li>
           <i class="fa fa-eye"></i>
@@ -138,20 +138,33 @@
     <div class="article-entry post-content" itemprop="articleBody">
       
             
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
+            <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h1><p>该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：<a href="http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;id=76" target="_blank" rel="noopener">http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;id=76</a> 。这里我主要说一下dex修复问题。</p>
+<h1 id="2-步骤"><a href="#2-步骤" class="headerlink" title="2.步骤"></a>2.步骤</h1><p>assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在了META-INF中CERT.RSA文件的末尾，保存结构为：</p>
+<pre><code>KEY=Misc@inf0#fjhx11+DEX=en(dex body)+aes-128-cbc
+</code></pre><p>将en(dex body)提取出来，用openssl命令解密：</p>
+<pre><code>openssl enc -aes-128-cbc -d -k Misc@inf0#fjhx11 -nosalt -in en_dex -out dex
+</code></pre><p>加到abc文件后边，然后需要修复dex_header中的缺少的结构的size值恢复。这里使用010 Editor的DEXTemplate.bt模板可以很容易解析出dex的结构信息。</p>
+<p>用到的公式是计算string size和type size时是偏移量的差值除以4.</p>
+<pre><code>string_ids_size=(type_ids_off-string_ids_off)/4
+ type_ids_size=(proto_ids_off-type_ids_off)/4
+</code></pre><p>计算proto size时</p>
+<pre><code>proto_ids_size=(field_ids_off-proto_ids_off)/12
+</code></pre><p>计算field size和method size时</p>
+<pre><code>field_ids_size=(method_ids_off-field_ids_off)/8
+ method_ids_size=(class_ids_off-method_ids_off)/8
+</code></pre><p>修复好size值后就可以用jeb载入分析了，分析时发现oncreate()函数的代码被抽走了，看一下函数大小，刚好和META-INF中的y文件大小一致，于是IDA载入找到oncreate()函数的偏移，将y的内容重新写入就OK了！</p>
+<h1 id="3-结果"><a href="#3-结果" class="headerlink" title="3.结果"></a>3.结果</h1><p>最后随便写个hello应用，加入反编译出来的代码就可以得到flag了。</p>
+<pre><code>StringBuilder v1 = new StringBuilder(&quot;m3ll0t_yetFLag&quot;);
+ v1.replace(0, 1, &quot;h&quot;);
+ v1.replace(5, 6, &quot;2&quot;);
+ v1.replace(10, 11, &quot;f&quot;);
+ v1.replace(7, 8, &quot;G&quot;);
+ Toast.makeText(this, &quot;flag is &quot; + v1.toString(), 0).show();
+</code></pre>
             <div class="post-copyright">
     <div class="content">
-        <p>最后更新： 2018年08月20日 22:22</p>
-        <p>原始链接： <a class="post-url" href="/2018/08/14/hello-world/" title="Hello World">http://diamiracle.github.io/2018/08/14/hello-world/</a></p>
+        <p>最后更新： 2018年08月20日 22:43</p>
+        <p>原始链接： <a class="post-url" href="/2018/08/20/Where/" title="Where解题思路">http://diamiracle.github.io/2018/08/20/Where/</a></p>
         <footer>
             <a href="http://diamiracle.github.io">
                 <img src="/images/logo.png" alt="John Doe">
@@ -208,7 +221,7 @@
     <div class="post-share-list" id="share-list">
         <ul class="share-icons">
           <li>
-            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/14/hello-world/&title=《Hello World》 — Hexo&pic=images/banner.jpg" data-title="微博">
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/20/Where/&title=《Where解题思路》 — Hexo&pic=images/banner.jpg" data-title="微博">
               <i class="fa fa-weibo"></i>
             </a>
           </li>
@@ -218,22 +231,22 @@
             </a>
           </li>
           <li>
-            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/14/hello-world/&title=《Hello World》 — Hexo&source=" data-title="QQ">
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/20/Where/&title=《Where解题思路》 — Hexo&source=" data-title="QQ">
               <i class="fa fa-qq"></i>
             </a>
           </li>
           <li>
-            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/14/hello-world/" data-title="Facebook">
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/20/Where/" data-title="Facebook">
               <i class="fa fa-facebook"></i>
             </a>
           </li>
           <li>
-            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Hello World》 — Hexo&url=http://diamiracle.github.io/2018/08/14/hello-world/&via=http://diamiracle.github.io" data-title="Twitter">
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Where解题思路》 — Hexo&url=http://diamiracle.github.io/2018/08/20/Where/&via=http://diamiracle.github.io" data-title="Twitter">
               <i class="fa fa-twitter"></i>
             </a>
           </li>
           <li>
-            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/14/hello-world/" data-title="Google+">
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/20/Where/" data-title="Google+">
               <i class="fa fa-google-plus"></i>
             </a>
           </li>
@@ -243,7 +256,7 @@
 <div class="post-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;" id="wxShare-close">×</a>
     <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/14/hello-world/" alt="微信分享二维码">
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/20/Where/" alt="微信分享二维码">
 </div>
 
 <div class="mask"></div>
@@ -261,23 +274,18 @@
 
     <aside class="post-toc-pos post-toc-top" id="post-toc">
         <nav class="post-toc-wrap">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Quick-Start"><span class="post-toc-text">Quick Start</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Create-a-new-post"><span class="post-toc-text">Create a new post</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Run-server"><span class="post-toc-text">Run server</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Generate-static-files"><span class="post-toc-text">Generate static files</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Deploy-to-remote-sites"><span class="post-toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#1-简介"><span class="post-toc-text">1.简介</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#2-步骤"><span class="post-toc-text">2.步骤</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#3-结果"><span class="post-toc-text">3.结果</span></a></li></ol>
         </nav>
     </aside>
     
 
 <nav id="article-nav">
   
-    <a href="/2018/08/20/Weijiami/" id="article-nav-newer" class="article-nav-link-wrap">
-
-      <span class="article-nav-title">
-        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
-        
-          伪加密
-        
-      </span>
-    </a>
   
+    <a href="/2018/08/20/Tuoke/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">DEX脱壳</span>
+      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+    </a>
   
 </nav>
 

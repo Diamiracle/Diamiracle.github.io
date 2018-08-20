@@ -8,18 +8,18 @@
   
     <meta name="keywords" content="Diamiracle,Diamiracle's Blog" />
   
-  <meta name="description" content="这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。 题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。 用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF和abclistmenuitemicon.xml。由">
+  <meta name="description" content="1.简介这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。 题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。 2.步骤用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF和abclistmenuitemic">
 <meta name="keywords" content="zip - 伪加密">
 <meta property="og:type" content="article">
 <meta property="og:title" content="伪加密">
 <meta property="og:url" content="http://diamiracle.github.io/2018/08/20/Weijiami/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。 题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。 用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF和abclistmenuitemicon.xml。由">
+<meta property="og:description" content="1.简介这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。 题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。 2.步骤用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF和abclistmenuitemic">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-20T13:55:25.558Z">
+<meta property="og:updated_time" content="2018-08-20T14:23:25.001Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="伪加密">
-<meta name="twitter:description" content="这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。 题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。 用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF和abclistmenuitemicon.xml。由">
+<meta name="twitter:description" content="1.简介这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。 题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。 2.步骤用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF和abclistmenuitemic">
   
   
     <link rel="icon" href="/favicon.ico">
@@ -139,33 +139,53 @@
     <div class="article-entry post-content" itemprop="articleBody">
       
             
-            <p>这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。</p>
+            <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h1><p>这里分享一下之前遇到的一个CTF题，涉及到APK伪加密技术，感觉还挺有意思的。</p>
 <p>题目为一个zip压缩文件，用010editor查看发现是一个APK，直接改后缀名为.apk，发现安装和反编译都会出现错误。题目提示是未加密，左移可能是伪加密改变了APK的结构，导致解析错误。</p>
-<p>用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF<em>和abclistmenuitemicon.xml</em>。由于之前也没自己动手去掉过伪加密，现在又从头开始学zip压缩文件的二进制结构，和一些之前有过的伪加密的文章。发现伪加密一般是通过修改PK 01 02 后面第五个字节开始的后面的两个字节来实现的，于是直接搜索定位两个伪加密文件在二进制文件中的位置。</p>
-<p>C:D5E0h: 00 63 6C 61 73 73 65 73 2E 64 65 78 50 4B 01 02  .classes.dexPK..<br>C:D5F0h: 14 00 14 00 09 01 08 00 F3 95 26 49 63 DE 38 A0  ……..髸&amp;Ic??<br>C:D600h: 66 01 00 00 B0 02 00 00 26 00 00 00 00 00 00 00  f…?..&amp;…….<br>C:D610h: 00 00 00 00 00 00 A3 4D 0C 00 72 65 73 2F 6C 61  ……..res/la<br>C:D620h: 79 6F 75 74 2F 61 62 63 5F 6C 69 73 74 5F 6D 65  yout/abc_list_me<br>C:D630h: 6E 75 5F 69 74 65 6D 5F 69 63 6F 6E 2E 78 6D 6C  nu_item_icon.xml<br>C:D640h: 50 4B 05 06 00 00 00 00 57 01 57 01 E3 86 00 00  PK……W.W.銌..<br>C:D650h: 5D 4F 0C 00 00 00                                ]O….<br>把CD5F5-CD5F6改为08 08</p>
-<p>C:4F50h: 08 63 DE 38 A0 66 01 00 00 B0 02 00 00 50 4B 01  .c?爁…?..PK.<br>C:4F60h: 02 14 00 14 00 09 01 08 00 F2 95 26 49 FE 05 E1  ………驎&amp;I??<br>C:4F70h: E6 E1 25 00 00 4A 90 00 00 14 00 04 00 00 00 00  驷%..J?……..<br>C:4F80h: 00 00 00 00 00 00 00 00 00 00 00 4D 45 54 41 2D  ………..META-<br>C:4F90h: 49 4E 46 2F 4D 41 4E 49 46 45 53 54 2E 4D 46 FE  INF/MANIFEST.MF?<br>C:4FA0h: CA 00 00 50 4B 01 02 14 00 14 00 08 08 08 00 F2  ?.PK……….?<br>把C4F66-C4F67改为08 08就可以去掉伪加密了</p>
+<h1 id="2-步骤"><a href="#2-步骤" class="headerlink" title="2.步骤"></a>2.步骤</h1><p>用360压缩打开zip文件，发现有两个文件是加过密的，MANIFEST.MF<em>和abclistmenuitemicon.xml</em>。由于之前也没自己动手去掉过伪加密，现在又从头开始学zip压缩文件的二进制结构，和一些之前有过的伪加密的文章。发现伪加密一般是通过修改PK 01 02 后面第五个字节开始的后面的两个字节来实现的，于是直接搜索定位两个伪加密文件在二进制文件中的位置。</p>
+<pre><code>C:D5E0h: 00 63 6C 61 73 73 65 73 2E 64 65 78 50 4B 01 02  .classes.dexPK.. 
+C:D5F0h: 14 00 14 00 09 01 08 00 F3 95 26 49 63 DE 38 A0  ........髸&amp;Ic??
+C:D600h: 66 01 00 00 B0 02 00 00 26 00 00 00 00 00 00 00  f...?..&amp;....... 
+C:D610h: 00 00 00 00 00 00 A3 4D 0C 00 72 65 73 2F 6C 61  ........res/la 
+C:D620h: 79 6F 75 74 2F 61 62 63 5F 6C 69 73 74 5F 6D 65  yout/abc_list_me 
+C:D630h: 6E 75 5F 69 74 65 6D 5F 69 63 6F 6E 2E 78 6D 6C  nu_item_icon.xml 
+C:D640h: 50 4B 05 06 00 00 00 00 57 01 57 01 E3 86 00 00  PK......W.W.銌.. 
+C:D650h: 5D 4F 0C 00 00 00  
+                              ]O....
+</code></pre><p>把CD5F5-CD5F6改为08 08</p>
+<pre><code>C:4F50h: 08 63 DE 38 A0 66 01 00 00 B0 02 00 00 50 4B 01  .c?爁...?..PK. 
+C:4F60h: 02 14 00 14 00 09 01 08 00 F2 95 26 49 FE 05 E1  .........驎&amp;I??
+C:4F70h: E6 E1 25 00 00 4A 90 00 00 14 00 04 00 00 00 00  驷%..J?........ 
+C:4F80h: 00 00 00 00 00 00 00 00 00 00 00 4D 45 54 41 2D  ...........META- 
+C:4F90h: 49 4E 46 2F 4D 41 4E 49 46 45 53 54 2E 4D 46 FE  INF/MANIFEST.MF?
+C:4FA0h: CA 00 00 50 4B 01 02 14 00 14 00 08 08 08 00 F2  ?.PK..........?
+</code></pre><p>把C4F66-C4F67改为08 08就可以去掉伪加密了</p>
 <p>然后就可以正常反编译了。可以看到flag是直接硬编码到代码中的。</p>
-<h1 id="virtual-methods"><a href="#virtual-methods" class="headerlink" title="virtual methods"></a>virtual methods</h1><p>.method protected onCreate(Landroid/os/Bundle;)V<br>    .locals 2<br>    .param p1, “savedInstanceState”    # Landroid/os/Bundle;</p>
-<pre><code>.prologue
-.line 12
-invoke-super {p0, p1}, Landroid/app/Activity;-&gt;onCreate(Landroid/os/Bundle;)V
+<pre><code># virtual methods
+.method protected onCreate(Landroid/os/Bundle;)V
+    .locals 2
+    .param p1, &quot;savedInstanceState&quot;    # Landroid/os/Bundle;
 
-.line 13
-const v1, 0x7f030018
+    .prologue
+    .line 12
+    invoke-super {p0, p1}, Landroid/app/Activity;-&gt;onCreate(Landroid/os/Bundle;)V
 
-invoke-virtual {p0, v1}, Lcom/example/crackme1/MainActivity;-&gt;setContentView(I)V
+    .line 13
+    const v1, 0x7f030018
 
-.line 14
-const-string v0, &quot;flag{galfasisiht}&quot;
+    invoke-virtual {p0, v1}, Lcom/example/crackme1/MainActivity;-&gt;setContentView(I)V
 
-.line 15
-.local v0, &quot;flag&quot;:Ljava/lang/String;
-return-void
-</code></pre><p>.end method<br>最后发现其实不用去掉伪加密就可以了，因为直接可以解压出classes.dex文件，然后反编译dex就可以了，但是整个过程还是挺有收获的。</p>
+    .line 14
+    const-string v0, &quot;flag{galfasisiht}&quot;
+
+    .line 15
+    .local v0, &quot;flag&quot;:Ljava/lang/String;
+    return-void
+.end method
+</code></pre><h1 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h1><p>最后发现其实不用去掉伪加密就可以了，因为直接可以解压出classes.dex文件，然后反编译dex就可以了，但是整个过程还是挺有收获的。</p>
 
             <div class="post-copyright">
     <div class="content">
-        <p>最后更新： 2018年08月20日 21:55</p>
+        <p>最后更新： 2018年08月20日 22:23</p>
         <p>原始链接： <a class="post-url" href="/2018/08/20/Weijiami/" title="伪加密">http://diamiracle.github.io/2018/08/20/Weijiami/</a></p>
         <footer>
             <a href="http://diamiracle.github.io">
@@ -283,12 +303,22 @@ return-void
 
     <aside class="post-toc-pos post-toc-top" id="post-toc">
         <nav class="post-toc-wrap">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#virtual-methods"><span class="post-toc-text">virtual methods</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#1-简介"><span class="post-toc-text">1.简介</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#2-步骤"><span class="post-toc-text">2.步骤</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#思考"><span class="post-toc-text">思考</span></a></li></ol>
         </nav>
     </aside>
     
 
 <nav id="article-nav">
+  
+    <a href="/2018/08/20/Tuoke/" id="article-nav-newer" class="article-nav-link-wrap">
+
+      <span class="article-nav-title">
+        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
+        
+          Tuoke
+        
+      </span>
+    </a>
   
   
     <a href="/2018/08/14/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
@@ -352,7 +382,7 @@ return-void
             
         </div>
         <div id="sidebar-menu-box-tags">
-            <a href="/tags/First/" style="font-size: 10px;">First</a> <a href="/tags/Second/" style="font-size: 10px;">Second</a> <a href="/tags/zip-伪加密/" style="font-size: 10px;">zip - 伪加密</a>
+            <a href="/tags/DEX-file-脱壳方法/" style="font-size: 10px;">DEX file - 脱壳方法</a> <a href="/tags/zip-伪加密/" style="font-size: 10px;">zip - 伪加密</a>
         </div>
     </div>
     <a href="javascript:;" class="sidebar-menu-box-close">&times;</a>
@@ -385,7 +415,7 @@ return-void
     <div class="mobile-header-tag-container">
         <span class="title">Tags</span>
         <div id="mobile-header-container-tags">
-            <a href="/tags/First/" style="font-size: 10px;">First</a> <a href="/tags/Second/" style="font-size: 10px;">Second</a> <a href="/tags/zip-伪加密/" style="font-size: 10px;">zip - 伪加密</a>
+            <a href="/tags/DEX-file-脱壳方法/" style="font-size: 10px;">DEX file - 脱壳方法</a> <a href="/tags/zip-伪加密/" style="font-size: 10px;">zip - 伪加密</a>
         </div>
     </div>
 </div>

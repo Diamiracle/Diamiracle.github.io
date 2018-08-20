@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8">
   
-  <title>MachineLearning | Hexo</title>
+  <title>Tuoke | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
     <meta name="keywords" content="Diamiracle,Diamiracle's Blog" />
   
-  <meta name="description" content="MinHow-This is a summary">
-<meta name="keywords" content="First,Second">
+  <meta name="description" content="1.简介以前都是看一些脱壳的文章，这次决定动手试试脱一下，下面总结一下整个脱壳过程。 脱壳样本为AliCTF2014evilAPK400，之前早有大神发过脱壳方法，所以不懂的地方就去看看大神的文章，这样的学习起来就不会觉得无助了。 2.步骤1）查壳AndroidKiller载入APK，提示该APP加壳了，xml中application类里有 android:name=&amp;quot;com.ali.m">
+<meta name="keywords" content="DEX file - 脱壳方法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MachineLearning">
-<meta property="og:url" content="http://diamiracle.github.io/2018/08/12/MachineLearning/index.html">
+<meta property="og:title" content="Tuoke">
+<meta property="og:url" content="http://diamiracle.github.io/2018/08/20/Tuoke/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="MinHow-This is a summary">
+<meta property="og:description" content="1.简介以前都是看一些脱壳的文章，这次决定动手试试脱一下，下面总结一下整个脱壳过程。 脱壳样本为AliCTF2014evilAPK400，之前早有大神发过脱壳方法，所以不懂的地方就去看看大神的文章，这样的学习起来就不会觉得无助了。 2.步骤1）查壳AndroidKiller载入APK，提示该APP加壳了，xml中application类里有 android:name=&amp;quot;com.ali.m">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-12T09:46:09.547Z">
+<meta property="og:updated_time" content="2018-08-20T14:31:59.103Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MachineLearning">
-<meta name="twitter:description" content="MinHow-This is a summary">
+<meta name="twitter:title" content="Tuoke">
+<meta name="twitter:description" content="1.简介以前都是看一些脱壳的文章，这次决定动手试试脱一下，下面总结一下整个脱壳过程。 脱壳样本为AliCTF2014evilAPK400，之前早有大神发过脱壳方法，所以不懂的地方就去看看大神的文章，这样的学习起来就不会觉得无助了。 2.步骤1）查壳AndroidKiller载入APK，提示该APP加壳了，xml中application类里有 android:name=&amp;quot;com.ali.m">
   
   
     <link rel="icon" href="/favicon.ico">
@@ -110,20 +110,20 @@
     </div>
 </header>
       <div class="outer">
-        <section id="main" class="body-wrap"><article id="post-MachineLearning" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main" class="body-wrap"><article id="post-Tuoke" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="post-title" itemprop="name">
-      MachineLearning
+      Tuoke
     </h1>
     <div class="post-title-bar">
       <ul>
           
         <li>
-          <i class="fa fa-calendar"></i>  2018-08-12
+          <i class="fa fa-calendar"></i>  2018-08-20
         </li>
         <li>
           <i class="fa fa-eye"></i>
@@ -139,12 +139,55 @@
     <div class="article-entry post-content" itemprop="articleBody">
       
             
-            <p> MinHow-This is a summary<br><a id="more"></a></p>
+            <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h1><p>以前都是看一些脱壳的文章，这次决定动手试试脱一下，下面总结一下整个脱壳过程。</p>
+<p>脱壳样本为AliCTF2014evilAPK400，之前早有大神发过脱壳方法，所以不懂的地方就去看看大神的文章，这样的学习起来就不会觉得无助了。</p>
+<h1 id="2-步骤"><a href="#2-步骤" class="headerlink" title="2.步骤"></a>2.步骤</h1><h2 id="1）查壳"><a href="#1）查壳" class="headerlink" title="1）查壳"></a>1）查壳</h2><p>AndroidKiller载入APK，提示该APP加壳了，xml中application类里有</p>
+<pre><code>android:name=&quot;com.ali.mobisecenhance.StubApplication&quot;
+</code></pre><p>一般加壳程序都会在application类里声明“android:name”，然后加载还原Dex的so库，此题也一样，类里加载了libmobisec.so，并且声明了三个native函数“b”，“attachBaseContext”和“onCreate”，其他的就没什么信息了。</p>
+<h2 id="2）动态调试"><a href="#2）动态调试" class="headerlink" title="2）动态调试"></a>2）动态调试</h2><p>于是动态调试，由于没什么信息，就直接在调试的时候在libmobisec.so里搜索dex，发现几个很可疑的函数“parsedex”、“dexjuicerpatch”等，其实这个壳只是最初的雏形，所以没加什么混淆，这对于我们初学者来说是很好的学习样本。接着在这几个可疑的函数都下断，F9运行，断在了parsedex函数里，然后就是一步一步的跟代码了。调试代码的时候可以把汇编代码转成伪代码来调试，这样可以加快分析的进度。</p>
+<p>程序首先打开assets目录下的cls.jar文件进行脱壳，函数为parse_dex里的openWithHeader()函数：</p>
+<pre><code>v32 = ((int (*)(ali::EncFile *, unsigned __int8 **, unsigned int *, unsigned int))ali::EncFile::openWithHeader)(
+          v31,
+          (unsigned __int8 **)&amp;v58,
+          (unsigned int *)&amp;v57,
+          0x10u);
+</code></pre><p>进去后里面有很多log，这也对分析提供了很多额外信息。整个脱壳过程为：</p>
+<p>cls.jar-&gt;decryptRc4()解密-&gt;Lzma解压<br>Rc4的密钥为0x18字节：</p>
+<pre><code>RC4_key:88 54 EB E8 A3 7E F2 F8  9F 75 F8 A6 8F 51 AB A0 98 33 C8 A8 8B 7C D0 94  65 61 64 00 89 3D 01 00
+</code></pre><p>Lzma解压后就可以dump出dex了，但是这里dump出的dex是不正确的，因为后面还有用同样的方法将assets目录下的juice.data解密出来对它进行patch的。原因在大神的文章里说了，此时dump出来的dex文件的method是被统一改成了同一个函数体：</p>
+<pre><code>new-instance v0, Ljava/lang/RuntimeException;
+
+invoke-direct {v0}, Ljava/lang/RuntimeException;-&gt;&lt;init&gt;()V
+</code></pre><p>这里注意dump时的文件大小，解压的时候文件是增大了的。然后找到juice.data解密的地方：</p>
+<pre><code>((_DWORD (*)(ali *, unsigned __int8 *, unsigned int, const char *))ali::dex_juicer_patch)(v33, v57, v101, v52) 
+</code></pre><p>里面的open()函数：</p>
+<pre><code>v6 = ((int (*)(ali::EncFile *, unsigned __int8 **, unsigned int *))ali::EncFile::open)(
+     v5,
+     (unsigned __int8 **)&amp;dword_752550E4[69],
+     (unsigned int *)&amp;dword_752550E4[68]);
+</code></pre><p>然后又进入到openWithHeader()函数进行解密。dump出解密的juice.data文件。</p>
+<h2 id="3）指针修复"><a href="#3）指针修复" class="headerlink" title="3）指针修复"></a>3）指针修复</h2><p>最后就是修复了，这里可以不用像大神那样去还原dex，可以直接在程序执行到patch结束时dump出cls.dex+decrypt.juice.data的内存。中间会有很多0x00填充，只要计算出文件的大小dump就可以了。刚到这里的时候，为了找CodeOff也是花了很多时间，以前也没怎么详细的去跟过dex的二进制，这次全补回来了。哈哈哈！最后发现可以直接把cls.dex+decrypt.juice.data的内存dump出来，因为decrypt.juice.data就接在cls.dex后面，因为cls.dex只是CodeOff被改了，这里只是把CodeOff还原出来，其他的没变。</p>
+<h1 id="3-脱壳完成"><a href="#3-脱壳完成" class="headerlink" title="3.脱壳完成"></a>3.脱壳完成</h1><p>当然大神还是大神，直接把还原时的算法给逆向出来了。最后就是要使dump出来的dex文件能被反编译为java了，但是直接用jeb和其他成型的工具都是该dex为无效的dex。这里也是坑了我很久，原来是使用工具的问题，反编译时用到的是baksmali和dex2jar，不要用其他的集成工具，所以分析时工具要用对啊，不然做好久都做不出来。</p>
+<p>首先用baksmali.jar反编译recovery.dex（也就是patch之后dump出来的dex），可以看到method都已经还原了。</p>
+<pre><code>.method static synthetic a(Lcom/ali/encryption/MainActivity;)V
+    .registers 2
+
+    invoke-static {}, Landroid/support/v4/app/qn;-&gt;a()Z
+
+    move-result v0
+
+    invoke-static {v0}, Landroid/support/v4/app/qn;-&gt;b(I)V
+
+    invoke-direct {p0}, Lcom/ali/encryption/MainActivity;-&gt;a()V
+
+    return-void
+.end method
+</code></pre><p>然后用dex2jar反编译recovery.dex出错，删掉反编译出来的所有的testdex2jarcrash()函数，然后用smali.jar将smali文件重新打包成dex文件，再用dex2jar反编译就可以了。</p>
 
             <div class="post-copyright">
     <div class="content">
-        <p>最后更新： 2018年08月12日 17:46</p>
-        <p>原始链接： <a class="post-url" href="/2018/08/12/MachineLearning/" title="MachineLearning">http://diamiracle.github.io/2018/08/12/MachineLearning/</a></p>
+        <p>最后更新： 2018年08月20日 22:31</p>
+        <p>原始链接： <a class="post-url" href="/2018/08/20/Tuoke/" title="Tuoke">http://diamiracle.github.io/2018/08/20/Tuoke/</a></p>
         <footer>
             <a href="http://diamiracle.github.io">
                 <img src="/images/logo.png" alt="John Doe">
@@ -201,7 +244,7 @@
     <div class="post-share-list" id="share-list">
         <ul class="share-icons">
           <li>
-            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/12/MachineLearning/&title=《MachineLearning》 — Hexo&pic=images/banner.jpg" data-title="微博">
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/20/Tuoke/&title=《Tuoke》 — Hexo&pic=images/banner.jpg" data-title="微博">
               <i class="fa fa-weibo"></i>
             </a>
           </li>
@@ -211,22 +254,22 @@
             </a>
           </li>
           <li>
-            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/12/MachineLearning/&title=《MachineLearning》 — Hexo&source= MinHow-This is a summary" data-title="QQ">
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/20/Tuoke/&title=《Tuoke》 — Hexo&source=" data-title="QQ">
               <i class="fa fa-qq"></i>
             </a>
           </li>
           <li>
-            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/12/MachineLearning/" data-title="Facebook">
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/20/Tuoke/" data-title="Facebook">
               <i class="fa fa-facebook"></i>
             </a>
           </li>
           <li>
-            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《MachineLearning》 — Hexo&url=http://diamiracle.github.io/2018/08/12/MachineLearning/&via=http://diamiracle.github.io" data-title="Twitter">
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Tuoke》 — Hexo&url=http://diamiracle.github.io/2018/08/20/Tuoke/&via=http://diamiracle.github.io" data-title="Twitter">
               <i class="fa fa-twitter"></i>
             </a>
           </li>
           <li>
-            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/12/MachineLearning/" data-title="Google+">
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/20/Tuoke/" data-title="Google+">
               <i class="fa fa-google-plus"></i>
             </a>
           </li>
@@ -236,7 +279,7 @@
 <div class="post-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;" id="wxShare-close">×</a>
     <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/12/MachineLearning/" alt="微信分享二维码">
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/20/Tuoke/" alt="微信分享二维码">
 </div>
 
 <div class="mask"></div>
@@ -248,9 +291,7 @@
   <li class="article-footer-tags">
     <i class="fa fa-tags"></i>
       
-    <a href="/tags/First/" class="color1">First</a>
-      
-    <a href="/tags/Second/" class="color2">Second</a>
+    <a href="/tags/DEXfile-脱壳方法/" class="color1">DEX file - 脱壳方法</a>
       
   </li>
 
@@ -261,19 +302,20 @@
 </article>
 
 
+    <aside class="post-toc-pos post-toc-top" id="post-toc">
+        <nav class="post-toc-wrap">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#1-简介"><span class="post-toc-text">1.简介</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#2-步骤"><span class="post-toc-text">2.步骤</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1）查壳"><span class="post-toc-text">1）查壳</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2）动态调试"><span class="post-toc-text">2）动态调试</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3）指针修复"><span class="post-toc-text">3）指针修复</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#3-脱壳完成"><span class="post-toc-text">3.脱壳完成</span></a></li></ol>
+        </nav>
+    </aside>
+    
 
 <nav id="article-nav">
   
-    <a href="/2018/08/14/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
-
-      <span class="article-nav-title">
-        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
-        
-          Hello World
-        
-      </span>
-    </a>
   
+    <a href="/2018/08/20/Weijiami/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">伪加密</span>
+      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+    </a>
   
 </nav>
 
@@ -331,7 +373,7 @@
             
         </div>
         <div id="sidebar-menu-box-tags">
-            <a href="/tags/First/" style="font-size: 10px;">First</a> <a href="/tags/Second/" style="font-size: 10px;">Second</a> <a href="/tags/zip-伪加密/" style="font-size: 10px;">zip - 伪加密</a>
+            <a href="/tags/DEX-file-脱壳方法/" style="font-size: 10px;">DEX file - 脱壳方法</a> <a href="/tags/zip-伪加密/" style="font-size: 10px;">zip - 伪加密</a>
         </div>
     </div>
     <a href="javascript:;" class="sidebar-menu-box-close">&times;</a>
@@ -364,7 +406,7 @@
     <div class="mobile-header-tag-container">
         <span class="title">Tags</span>
         <div id="mobile-header-container-tags">
-            <a href="/tags/First/" style="font-size: 10px;">First</a> <a href="/tags/Second/" style="font-size: 10px;">Second</a> <a href="/tags/zip-伪加密/" style="font-size: 10px;">zip - 伪加密</a>
+            <a href="/tags/DEX-file-脱壳方法/" style="font-size: 10px;">DEX file - 脱壳方法</a> <a href="/tags/zip-伪加密/" style="font-size: 10px;">zip - 伪加密</a>
         </div>
     </div>
 </div>

@@ -3,22 +3,23 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Where解题思路 | Hexo</title>
+  <title>Pyinstaller Recover | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
     <meta name="keywords" content="Diamiracle,Diamiracle's Blog" />
   
-  <meta name="description" content="1.简介该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;amp;id=76 。这里我主要说一下dex修复问题。 2.步骤assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在">
+  <meta name="description" content="1.简介最近遇到一个被Pyinstaller转换为ELF文件的东西，于是想要将它恢复成原python文件，记录整个恢复过程如下： 恢复步骤：1.从github上下载pyinstaller项目。 2.打开cmd，进入到pyinstaller文件夹，执行命令： archive_viewer.py hello（需要恢复的二进制文件） 得到结果如下： pos, length, uncompressed,">
+<meta name="keywords" content="Pyinstall - 反编译为python">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Where解题思路">
-<meta property="og:url" content="http://diamiracle.github.io/2018/08/20/Where/index.html">
+<meta property="og:title" content="Pyinstaller Recover">
+<meta property="og:url" content="http://diamiracle.github.io/2018/08/21/Pyinstaller-recover/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="1.简介该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;amp;id=76 。这里我主要说一下dex修复问题。 2.步骤assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在">
+<meta property="og:description" content="1.简介最近遇到一个被Pyinstaller转换为ELF文件的东西，于是想要将它恢复成原python文件，记录整个恢复过程如下： 恢复步骤：1.从github上下载pyinstaller项目。 2.打开cmd，进入到pyinstaller文件夹，执行命令： archive_viewer.py hello（需要恢复的二进制文件） 得到结果如下： pos, length, uncompressed,">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-20T14:43:03.877Z">
+<meta property="og:updated_time" content="2018-08-21T14:19:12.155Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Where解题思路">
-<meta name="twitter:description" content="1.简介该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;amp;id=76 。这里我主要说一下dex修复问题。 2.步骤assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在">
+<meta name="twitter:title" content="Pyinstaller Recover">
+<meta name="twitter:description" content="1.简介最近遇到一个被Pyinstaller转换为ELF文件的东西，于是想要将它恢复成原python文件，记录整个恢复过程如下： 恢复步骤：1.从github上下载pyinstaller项目。 2.打开cmd，进入到pyinstaller文件夹，执行命令： archive_viewer.py hello（需要恢复的二进制文件） 得到结果如下： pos, length, uncompressed,">
   
   
     <link rel="icon" href="/favicon.ico">
@@ -109,20 +110,20 @@
     </div>
 </header>
       <div class="outer">
-        <section id="main" class="body-wrap"><article id="post-Where" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main" class="body-wrap"><article id="post-Pyinstaller-recover" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="post-title" itemprop="name">
-      Where解题思路
+      Pyinstaller Recover
     </h1>
     <div class="post-title-bar">
       <ul>
           
         <li>
-          <i class="fa fa-calendar"></i>  2018-08-20
+          <i class="fa fa-calendar"></i>  2018-08-21
         </li>
         <li>
           <i class="fa fa-eye"></i>
@@ -138,33 +139,87 @@
     <div class="article-entry post-content" itemprop="articleBody">
       
             
-            <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h1><p>该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：<a href="http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;id=76" target="_blank" rel="noopener">http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;id=76</a> 。这里我主要说一下dex修复问题。</p>
-<h1 id="2-步骤"><a href="#2-步骤" class="headerlink" title="2.步骤"></a>2.步骤</h1><p>assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在了META-INF中CERT.RSA文件的末尾，保存结构为：</p>
-<pre><code>KEY=Misc@inf0#fjhx11+DEX=en(dex body)+aes-128-cbc
-</code></pre><p>将en(dex body)提取出来，用openssl命令解密：</p>
-<pre><code>openssl enc -aes-128-cbc -d -k Misc@inf0#fjhx11 -nosalt -in en_dex -out dex
-</code></pre><p>加到abc文件后边，然后需要修复dex_header中的缺少的结构的size值恢复。这里使用010 Editor的DEXTemplate.bt模板可以很容易解析出dex的结构信息。</p>
-<p>用到的公式是计算string size和type size时是偏移量的差值除以4.</p>
-<pre><code>string_ids_size=(type_ids_off-string_ids_off)/4
- type_ids_size=(proto_ids_off-type_ids_off)/4
-</code></pre><p>计算proto size时</p>
-<pre><code>proto_ids_size=(field_ids_off-proto_ids_off)/12
-</code></pre><p>计算field size和method size时</p>
-<pre><code>field_ids_size=(method_ids_off-field_ids_off)/8
- method_ids_size=(class_ids_off-method_ids_off)/8
-</code></pre><p>修复好size值后就可以用jeb载入分析了，分析时发现oncreate()函数的代码被抽走了，看一下函数大小，刚好和META-INF中的y文件大小一致，于是IDA载入找到oncreate()函数的偏移，将y的内容重新写入就OK了！</p>
-<h1 id="3-结果"><a href="#3-结果" class="headerlink" title="3.结果"></a>3.结果</h1><p>最后随便写个hello应用，加入反编译出来的代码就可以得到flag了。</p>
-<pre><code>StringBuilder v1 = new StringBuilder(&quot;m3ll0t_yetFLag&quot;);
- v1.replace(0, 1, &quot;h&quot;);
- v1.replace(5, 6, &quot;2&quot;);
- v1.replace(10, 11, &quot;f&quot;);
- v1.replace(7, 8, &quot;G&quot;);
- Toast.makeText(this, &quot;flag is &quot; + v1.toString(), 0).show();
+            <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h1><p>最近遇到一个被Pyinstaller转换为ELF文件的东西，于是想要将它恢复成原python文件，记录整个恢复过程如下：</p>
+<h1 id="恢复步骤："><a href="#恢复步骤：" class="headerlink" title="恢复步骤："></a>恢复步骤：</h1><p>1.从github上下载pyinstaller项目。</p>
+<p>2.打开cmd，进入到pyinstaller文件夹，执行命令：</p>
+<pre><code>archive_viewer.py hello（需要恢复的二进制文件）
+</code></pre><p>得到结果如下：</p>
+<pre><code>pos, length, uncompressed, iscompressed, type, name
+ [(0, 172, 237, 1, &apos;m&apos;, u&apos;struct&apos;),
+ (172, 1140, 2543, 1, &apos;m&apos;, u&apos;pyimod01_os_path&apos;),
+ (1312, 3919, 10567, 1, &apos;m&apos;, u&apos;pyimod02_archive&apos;),
+ (5231, 6015, 18157, 1, &apos;m&apos;, u&apos;pyimod03_importers&apos;),
+ (11246, 1542, 4347, 1, &apos;s&apos;, u&apos;pyiboot01_bootstrap&apos;),
+ (12788, 143, 189, 1, &apos;s&apos;, u&apos;hello&apos;),
+ (12931, 101344, 149696, 1, &apos;b&apos;, u&apos;_codecs_cn.x86_64-linux-gnu.so&apos;),
+ (114275, 34943, 157920, 1, &apos;b&apos;, u&apos;_codecs_hk.x86_64-linux-gnu.so&apos;),
+ (149218, 10733, 30912, 1, &apos;b&apos;, u&apos;_codecs_iso2022.x86_64-linux-gnu.so&apos;),
+ (159951, 94402, 264384, 1, &apos;b&apos;, u&apos;_codecs_jp.x86_64-linux-gnu.so&apos;),
+ (254353, 78203, 137408, 1, &apos;b&apos;, u&apos;_codecs_kr.x86_64-linux-gnu.so&apos;),
+ (332556, 62869, 108736, 1, &apos;b&apos;, u&apos;_codecs_tw.x86_64-linux-gnu.so&apos;),
+ (395425, 7268, 20664, 1, &apos;b&apos;, u&apos;_hashlib.x86_64-linux-gnu.so&apos;),
+ (402693, 17112, 43192, 1, &apos;b&apos;, u&apos;_multibytecodec.x86_64-linux-gnu.so&apos;),
+ (419805, 19448, 46768, 1, &apos;b&apos;, u&apos;bz2.x86_64-linux-gnu.so&apos;),
+ (439253, 47292, 109232, 1, &apos;b&apos;, u&apos;datetime.x86_64-linux-gnu.so&apos;),
+ (486545, 29089, 66632, 1, &apos;b&apos;, u&apos;libbz2.so.1.0&apos;),
+ (515634, 772171, 1934624, 1, &apos;b&apos;, u&apos;libcrypto.so.1.0.0&apos;),
+ (1287805, 1343303, 3480816, 1, &apos;b&apos;, u&apos;libpython2.7.so.1.0&apos;),
+ (2631108, 119262, 282352, 1, &apos;b&apos;, u&apos;libreadline.so.6&apos;),
+ (2750370, 62181, 167096, 1, &apos;b&apos;, u&apos;libtinfo.so.5&apos;),
+ (2812551, 52914, 100728, 1, &apos;b&apos;, u&apos;libz.so.1&apos;),
+ (2865465, 9469, 27088, 1, &apos;b&apos;, u&apos;readline.x86_64-linux-gnu.so&apos;),
+ (2874934, 4208, 11152, 1, &apos;b&apos;, u&apos;resource.x86_64-linux-gnu.so&apos;),
+ (2879142, 635080, 635080, 0, &apos;z&apos;, u&apos;out00-PYZ.pyz&apos;)]
+</code></pre><p>3.其中的hello就是我们的目标文件，接着执行命令：</p>
+<pre><code>？ X hello（目标文件名）
+to filename? （保存路径）\hello.pyc
+</code></pre><p>4.此时提取出来的是编译后的pyc文件，并且缺少文件标识。用010打开并在文件开始插入“D1 F2 0D 0A 00 00 00 00”保存:</p>
+<pre><code>D1 F2 0D 0A 00 00 00 00 63 00 00 00 00 00 00 00
+00 03 00 00 00 40 00 00 00 73 34 00 00 00 64 00
+</code></pre><p>5.使用pyc反编译软件即可恢复出原python文件。<br>如果pyinstaller转换的是有依赖文件的python文件，在反编译pyc的时候可能会出现指针越界的错误，解决方法如下：</p>
+<pre><code>import dis,marshal
+f=open(&apos;hello.pyc&apos;,&apos;rb&apos;)
+magic=f.read(4)
+mtime=f.read(4)
+code=marshal.load(f)
+dis.dis(code)
+</code></pre><p>得到如下代码：</p>
+<pre><code>1           0 LOAD_CONST               0 (0)
+            3 STORE_NAME               0 (i)
+
+3           6 SETUP_LOOP              39 (to 48)
+            9 LOAD_NAME                1 (range)
+           12 LOAD_CONST               1 (4)
+           15 CALL_FUNCTION            1
+           18 GET_ITER            
+      &gt;&gt;   19 FOR_ITER                25 (to 47)
+           22 STORE_NAME               2 (j)
+
+ 4          25 LOAD_NAME                0 (i)
+            28 LOAD_CONST               2 (1)
+            31 INPLACE_ADD         
+            32 STORE_NAME               0 (i)
+
+ 5          35 LOAD_CONST               3 (&apos;Hello &apos;)
+            38 PRINT_ITEM          
+            39 LOAD_NAME                0 (i)
+            42 PRINT_ITEM          
+            43 PRINT_NEWLINE       
+            44 JUMP_ABSOLUTE           19
+       &gt;&gt;   47 POP_BLOCK           
+       &gt;&gt;   48 LOAD_CONST               4 (None)
+            51 RETURN_VALUE
+</code></pre><p>根据这些指令也可以构造出原python代码为：</p>
+<pre><code>i=0
+
+for j in range(4):
+    i+=1
+    print &apos;Hello &apos;,i
 </code></pre>
             <div class="post-copyright">
     <div class="content">
-        <p>最后更新： 2018年08月20日 22:43</p>
-        <p>原始链接： <a class="post-url" href="/2018/08/20/Where/" title="Where解题思路">http://diamiracle.github.io/2018/08/20/Where/</a></p>
+        <p>最后更新： 2018年08月21日 22:19</p>
+        <p>原始链接： <a class="post-url" href="/2018/08/21/Pyinstaller-recover/" title="Pyinstaller Recover">http://diamiracle.github.io/2018/08/21/Pyinstaller-recover/</a></p>
         <footer>
             <a href="http://diamiracle.github.io">
                 <img src="/images/logo.png" alt="John Doe">
@@ -221,7 +276,7 @@
     <div class="post-share-list" id="share-list">
         <ul class="share-icons">
           <li>
-            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/20/Where/&title=《Where解题思路》 — Hexo&pic=images/banner.jpg" data-title="微博">
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/21/Pyinstaller-recover/&title=《Pyinstaller Recover》 — Hexo&pic=images/banner.jpg" data-title="微博">
               <i class="fa fa-weibo"></i>
             </a>
           </li>
@@ -231,22 +286,22 @@
             </a>
           </li>
           <li>
-            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/20/Where/&title=《Where解题思路》 — Hexo&source=" data-title="QQ">
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/21/Pyinstaller-recover/&title=《Pyinstaller Recover》 — Hexo&source=" data-title="QQ">
               <i class="fa fa-qq"></i>
             </a>
           </li>
           <li>
-            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/20/Where/" data-title="Facebook">
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/21/Pyinstaller-recover/" data-title="Facebook">
               <i class="fa fa-facebook"></i>
             </a>
           </li>
           <li>
-            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Where解题思路》 — Hexo&url=http://diamiracle.github.io/2018/08/20/Where/&via=http://diamiracle.github.io" data-title="Twitter">
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Pyinstaller Recover》 — Hexo&url=http://diamiracle.github.io/2018/08/21/Pyinstaller-recover/&via=http://diamiracle.github.io" data-title="Twitter">
               <i class="fa fa-twitter"></i>
             </a>
           </li>
           <li>
-            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/20/Where/" data-title="Google+">
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/21/Pyinstaller-recover/" data-title="Google+">
               <i class="fa fa-google-plus"></i>
             </a>
           </li>
@@ -256,7 +311,7 @@
 <div class="post-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;" id="wxShare-close">×</a>
     <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/20/Where/" alt="微信分享二维码">
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/21/Pyinstaller-recover/" alt="微信分享二维码">
 </div>
 
 <div class="mask"></div>
@@ -265,6 +320,13 @@
         <ul class="article-footer-menu">
             
             
+  <li class="article-footer-tags">
+    <i class="fa fa-tags"></i>
+      
+    <a href="/tags/Pyinstall-反编译为python/" class="color3">Pyinstall - 反编译为python</a>
+      
+  </li>
+
         </ul>
         
     </footer>
@@ -274,26 +336,16 @@
 
     <aside class="post-toc-pos post-toc-top" id="post-toc">
         <nav class="post-toc-wrap">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#1-简介"><span class="post-toc-text">1.简介</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#2-步骤"><span class="post-toc-text">2.步骤</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#3-结果"><span class="post-toc-text">3.结果</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#1-简介"><span class="post-toc-text">1.简介</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#恢复步骤："><span class="post-toc-text">恢复步骤：</span></a></li></ol>
         </nav>
     </aside>
     
 
 <nav id="article-nav">
   
-    <a href="/2018/08/21/antiDebuggable/" id="article-nav-newer" class="article-nav-link-wrap">
-
-      <span class="article-nav-title">
-        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
-        
-          Android反调试绕过（一）
-        
-      </span>
-    </a>
   
-  
-    <a href="/2018/08/20/Tuoke/" id="article-nav-older" class="article-nav-link-wrap">
-      <span class="article-nav-title">DEX脱壳</span>
+    <a href="/2018/08/21/antiDebuggable1/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">Android反调试绕过（二）</span>
       <i class="fa fa-hand-o-right" aria-hidden="true"></i>
     </a>
   

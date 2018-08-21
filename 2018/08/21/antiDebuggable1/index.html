@@ -3,22 +3,23 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Where解题思路 | Hexo</title>
+  <title>Android反调试绕过（二） | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
     <meta name="keywords" content="Diamiracle,Diamiracle's Blog" />
   
-  <meta name="description" content="1.简介该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;amp;id=76 。这里我主要说一下dex修复问题。 2.步骤assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在">
+  <meta name="description" content="4.绕过TracePid的Anti-Debug当你的手机型号不同的时候，你要选择自己的版本，具体可以看这里https://source.android.com/source/building-kernels.html 特别注意的是要选对自己的型号，不然会开不了机 步骤：下载源码 创建一个文件夹，执行 git clone https://android.googlesource.com/kernel">
+<meta name="keywords" content="AOSP - 反调试绕过">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Where解题思路">
-<meta property="og:url" content="http://diamiracle.github.io/2018/08/20/Where/index.html">
+<meta property="og:title" content="Android反调试绕过（二）">
+<meta property="og:url" content="http://diamiracle.github.io/2018/08/21/antiDebuggable1/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="1.简介该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;amp;id=76 。这里我主要说一下dex修复问题。 2.步骤assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在">
+<meta property="og:description" content="4.绕过TracePid的Anti-Debug当你的手机型号不同的时候，你要选择自己的版本，具体可以看这里https://source.android.com/source/building-kernels.html 特别注意的是要选对自己的型号，不然会开不了机 步骤：下载源码 创建一个文件夹，执行 git clone https://android.googlesource.com/kernel">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-08-20T14:43:03.877Z">
+<meta property="og:updated_time" content="2018-08-21T14:11:10.213Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Where解题思路">
-<meta name="twitter:description" content="1.简介该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;amp;id=76 。这里我主要说一下dex修复问题。 2.步骤assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在">
+<meta name="twitter:title" content="Android反调试绕过（二）">
+<meta name="twitter:description" content="4.绕过TracePid的Anti-Debug当你的手机型号不同的时候，你要选择自己的版本，具体可以看这里https://source.android.com/source/building-kernels.html 特别注意的是要选对自己的型号，不然会开不了机 步骤：下载源码 创建一个文件夹，执行 git clone https://android.googlesource.com/kernel">
   
   
     <link rel="icon" href="/favicon.ico">
@@ -109,20 +110,20 @@
     </div>
 </header>
       <div class="outer">
-        <section id="main" class="body-wrap"><article id="post-Where" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main" class="body-wrap"><article id="post-antiDebuggable1" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="post-title" itemprop="name">
-      Where解题思路
+      Android反调试绕过（二）
     </h1>
     <div class="post-title-bar">
       <ul>
           
         <li>
-          <i class="fa fa-calendar"></i>  2018-08-20
+          <i class="fa fa-calendar"></i>  2018-08-21
         </li>
         <li>
           <i class="fa fa-eye"></i>
@@ -138,33 +139,83 @@
     <div class="article-entry post-content" itemprop="articleBody">
       
             
-            <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h1><p>该题用到了炸弹引爆+dex修复的解题思路。炸弹引爆就不说了，阿里聚安全有篇博客写得很清楚：<a href="http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;id=76" target="_blank" rel="noopener">http://jaq.alibaba.com/blog.htm?spm=0.0.0.0.v5UAtC&amp;id=76</a> 。这里我主要说一下dex修复问题。</p>
-<h1 id="2-步骤"><a href="#2-步骤" class="headerlink" title="2.步骤"></a>2.步骤</h1><p>assets目录下的abc是埋炸弹的dex_header，但是缺少了dex body部分，通过炸弹引爆漏洞找到加密的dex body加在了META-INF中CERT.RSA文件的末尾，保存结构为：</p>
-<pre><code>KEY=Misc@inf0#fjhx11+DEX=en(dex body)+aes-128-cbc
-</code></pre><p>将en(dex body)提取出来，用openssl命令解密：</p>
-<pre><code>openssl enc -aes-128-cbc -d -k Misc@inf0#fjhx11 -nosalt -in en_dex -out dex
-</code></pre><p>加到abc文件后边，然后需要修复dex_header中的缺少的结构的size值恢复。这里使用010 Editor的DEXTemplate.bt模板可以很容易解析出dex的结构信息。</p>
-<p>用到的公式是计算string size和type size时是偏移量的差值除以4.</p>
-<pre><code>string_ids_size=(type_ids_off-string_ids_off)/4
- type_ids_size=(proto_ids_off-type_ids_off)/4
-</code></pre><p>计算proto size时</p>
-<pre><code>proto_ids_size=(field_ids_off-proto_ids_off)/12
-</code></pre><p>计算field size和method size时</p>
-<pre><code>field_ids_size=(method_ids_off-field_ids_off)/8
- method_ids_size=(class_ids_off-method_ids_off)/8
-</code></pre><p>修复好size值后就可以用jeb载入分析了，分析时发现oncreate()函数的代码被抽走了，看一下函数大小，刚好和META-INF中的y文件大小一致，于是IDA载入找到oncreate()函数的偏移，将y的内容重新写入就OK了！</p>
-<h1 id="3-结果"><a href="#3-结果" class="headerlink" title="3.结果"></a>3.结果</h1><p>最后随便写个hello应用，加入反编译出来的代码就可以得到flag了。</p>
-<pre><code>StringBuilder v1 = new StringBuilder(&quot;m3ll0t_yetFLag&quot;);
- v1.replace(0, 1, &quot;h&quot;);
- v1.replace(5, 6, &quot;2&quot;);
- v1.replace(10, 11, &quot;f&quot;);
- v1.replace(7, 8, &quot;G&quot;);
- Toast.makeText(this, &quot;flag is &quot; + v1.toString(), 0).show();
-</code></pre>
+            <h1 id="4-绕过TracePid的Anti-Debug"><a href="#4-绕过TracePid的Anti-Debug" class="headerlink" title="4.绕过TracePid的Anti-Debug"></a>4.绕过TracePid的Anti-Debug</h1><p>当你的手机型号不同的时候，你要选择自己的版本，具体可以看这里<a href="https://source.android.com/source/building-kernels.html" target="_blank" rel="noopener">https://source.android.com/source/building-kernels.html</a></p>
+<p>特别注意的是要选对自己的型号，不然会开不了机</p>
+<h2 id="步骤："><a href="#步骤：" class="headerlink" title="步骤："></a>步骤：</h2><p>下载源码</p>
+<p>创建一个文件夹，执行</p>
+<pre><code>git clone https://android.googlesource.com/kernel/msm.git`
+</code></pre><p>这里有的会提示网络拒绝连接，我们选择清华的aosp源，</p>
+<pre><code>  git clone https://aosp.tuna.tsinghua.edu.cn/kernel/msm.git`
+
+git branch -a` 
+
+git checkout origin/android-msm-mako-3.4-jb-mr2`
+</code></pre><p>代码下载好以后，通过全局查找TracerPid，在源码的的fs/proc/array.c文件里面，修改tpid的值始终为0.</p>
+<pre><code>tpid = 0;
+if (pid_alive(p)) {
+    struct task_struct *tracer = ptrace_parent(p);
+    if (tracer)
+        tpid = task_pid_nr_ns(tracer, ns);
+}
+tpid = 0;        //将判断之后的tpid值设为0
+</code></pre><p>这样无论前面怎么操作，TracerPid始终为0.修改好代码后，下面设置环境变量，注意每次编译之前都得设置一下，如果你没有编译过android源码，你还得下载这个工具，</p>
+<pre><code>git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6
+
+export PATH=$(pwd)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin:$PATH
+export ARCH=arm
+export SUBARCH=arm
+export CROSS_COMPILE=arm-eabi-
+make mako_defconfig
+make -j12
+</code></pre><p>一切顺利的话，会在当前子目录arch/arm/boot 目录下面生成zImage，我们的kernel文件。 有了kernel，怎么刷入手机中，两种方式，如果你是android源码编译的话，将这个zImage替换android源码的device/lge/mako-kernel文件夹的中kernel文件，这样你编译出来的系统内核被替换我们自己编译的内核。还有一种方式，我们手机刷入recovery以后，用卡包的方式刷机，在这个zip文件中，有个boot.img文件，通过解包得到内核和文件系统，然后替换内核，在重新打包得到boot.img,再把这个boot.img刷入到手机就可以。下载所需要的工具</p>
+<pre><code>git clone https://github.com/pbatard/bootimg-tools.git
+cd bootimg-tools/
+make 
+</code></pre><p>解包boot.img</p>
+<pre><code>unmkbootimg -i boot_img/boot.img
+</code></pre><p>重新打包boot.img</p>
+<pre><code>cp msm/arch/arm/boot/zImage-dtb kernel
+mkbootimg --base 0 --pagesize 2048 --kernel_offset 0x00008000 --ramdisk_offset 0x02900000 --second_offset 0x00f00000 --tags_offset 0x02700000 --cmdline &apos;console=ttyHSL0,115200,n8 androidboot.hardware=hammerhead  user_debug=31 maxcpus=2 msm_watchdog_v2.enable=1&apos; --kernel kernel --ramdisk ramdisk.cpio.gz -o boot.img
+</code></pre><p>选择新的boot.img启动或者直接刷入</p>
+<pre><code>fastboot boot boot.img或者fastboot flash boot boot.img
+</code></pre><h1 id="5-绕过ptrace反调试保护"><a href="#5-绕过ptrace反调试保护" class="headerlink" title="5.绕过ptrace反调试保护"></a>5.绕过ptrace反调试保护</h1><p>很多加固还会采用ptrace的方式来反调试，如娜迦加固。一个应用有三个进程，但是躲进程都是fork出来的，因此只需修改/bionic/libc/bionic/fork.c里面的fork函数来使得目标进程fork失败。</p>
+<pre><code>int get_target2()
+{
+  char res[BUF_LEN]={0};
+  char cmd[128]={0};
+  sprintf(cmd,&quot;/proc/%d/cmdline&quot;,getpid());
+  int fd=open(cmd,O_RDONLY);
+  if(read(fd,res,BUF_LEN))
+  {
+  }else{
+  }
+  close(fd);
+  char targetPath[BUF_LEN];
+  sprintf(targetPath,&quot;/data/data/%s&quot;,res);
+  if((access(targetPath,F_OK))==0)
+  {
+      return 1;
+  }
+  return 0;
+}
+
+extern int  __fork(void);
+
+int  fork(void)
+{
+  int  ret;
+
+  if(get_target2())
+  {
+     return -1;
+  }
+</code></pre><p>修改fork函数后，目标APK只剩下一个进程了，可以正常的调试了。</p>
+<p>参考链接：<br><a href="http://blog.csdn.net/liu1075538266/article/details/51272398" target="_blank" rel="noopener">http://blog.csdn.net/liu1075538266/article/details/51272398</a><br><a href="http://bbs.pediy.com/showthread.php?p=1436298" target="_blank" rel="noopener">http://bbs.pediy.com/showthread.php?p=1436298</a><br><a href="http://bbs.pediy.com/showthread.php?t=197334" target="_blank" rel="noopener">http://bbs.pediy.com/showthread.php?t=197334</a><br><a href="http://blog.csdn.net/zhangmiaoping23/article/details/51884957" target="_blank" rel="noopener">http://blog.csdn.net/zhangmiaoping23/article/details/51884957</a></p>
+
             <div class="post-copyright">
     <div class="content">
-        <p>最后更新： 2018年08月20日 22:43</p>
-        <p>原始链接： <a class="post-url" href="/2018/08/20/Where/" title="Where解题思路">http://diamiracle.github.io/2018/08/20/Where/</a></p>
+        <p>最后更新： 2018年08月21日 22:11</p>
+        <p>原始链接： <a class="post-url" href="/2018/08/21/antiDebuggable1/" title="Android反调试绕过（二）">http://diamiracle.github.io/2018/08/21/antiDebuggable1/</a></p>
         <footer>
             <a href="http://diamiracle.github.io">
                 <img src="/images/logo.png" alt="John Doe">
@@ -221,7 +272,7 @@
     <div class="post-share-list" id="share-list">
         <ul class="share-icons">
           <li>
-            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/20/Where/&title=《Where解题思路》 — Hexo&pic=images/banner.jpg" data-title="微博">
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/21/antiDebuggable1/&title=《Android反调试绕过（二）》 — Hexo&pic=images/banner.jpg" data-title="微博">
               <i class="fa fa-weibo"></i>
             </a>
           </li>
@@ -231,22 +282,22 @@
             </a>
           </li>
           <li>
-            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/20/Where/&title=《Where解题思路》 — Hexo&source=" data-title="QQ">
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/21/antiDebuggable1/&title=《Android反调试绕过（二）》 — Hexo&source=" data-title="QQ">
               <i class="fa fa-qq"></i>
             </a>
           </li>
           <li>
-            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/20/Where/" data-title="Facebook">
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/21/antiDebuggable1/" data-title="Facebook">
               <i class="fa fa-facebook"></i>
             </a>
           </li>
           <li>
-            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Where解题思路》 — Hexo&url=http://diamiracle.github.io/2018/08/20/Where/&via=http://diamiracle.github.io" data-title="Twitter">
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android反调试绕过（二）》 — Hexo&url=http://diamiracle.github.io/2018/08/21/antiDebuggable1/&via=http://diamiracle.github.io" data-title="Twitter">
               <i class="fa fa-twitter"></i>
             </a>
           </li>
           <li>
-            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/20/Where/" data-title="Google+">
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/21/antiDebuggable1/" data-title="Google+">
               <i class="fa fa-google-plus"></i>
             </a>
           </li>
@@ -256,7 +307,7 @@
 <div class="post-modal wx-share" id="wxShare">
     <a class="close" href="javascript:;" id="wxShare-close">×</a>
     <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/20/Where/" alt="微信分享二维码">
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/21/antiDebuggable1/" alt="微信分享二维码">
 </div>
 
 <div class="mask"></div>
@@ -265,6 +316,13 @@
         <ul class="article-footer-menu">
             
             
+  <li class="article-footer-tags">
+    <i class="fa fa-tags"></i>
+      
+    <a href="/tags/AOSP-反调试绕过/" class="color3">AOSP - 反调试绕过</a>
+      
+  </li>
+
         </ul>
         
     </footer>
@@ -274,26 +332,26 @@
 
     <aside class="post-toc-pos post-toc-top" id="post-toc">
         <nav class="post-toc-wrap">
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#1-简介"><span class="post-toc-text">1.简介</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#2-步骤"><span class="post-toc-text">2.步骤</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#3-结果"><span class="post-toc-text">3.结果</span></a></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#4-绕过TracePid的Anti-Debug"><span class="post-toc-text">4.绕过TracePid的Anti-Debug</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#步骤："><span class="post-toc-text">步骤：</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#5-绕过ptrace反调试保护"><span class="post-toc-text">5.绕过ptrace反调试保护</span></a></li></ol>
         </nav>
     </aside>
     
 
 <nav id="article-nav">
   
-    <a href="/2018/08/21/antiDebuggable/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/08/21/Pyinstaller-recover/" id="article-nav-newer" class="article-nav-link-wrap">
 
       <span class="article-nav-title">
         <i class="fa fa-hand-o-left" aria-hidden="true"></i>
         
-          Android反调试绕过（一）
+          Pyinstaller Recover
         
       </span>
     </a>
   
   
-    <a href="/2018/08/20/Tuoke/" id="article-nav-older" class="article-nav-link-wrap">
-      <span class="article-nav-title">DEX脱壳</span>
+    <a href="/2018/08/21/antiDebuggable/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">Android反调试绕过（一）</span>
       <i class="fa fa-hand-o-right" aria-hidden="true"></i>
     </a>
   

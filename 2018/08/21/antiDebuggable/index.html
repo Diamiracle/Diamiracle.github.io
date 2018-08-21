@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android反调试绕过（一） | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="Diamiracle,Diamiracle's Blog" />
+  
+  <meta name="description" content="1.简介在做CTF的过程中，经常遇到各种抗调试和反调试的APK保护机制，于是就想自己做一个能绕过所有反调试的ROM，以减少分析反调试方法的时间。实现手机是Nexus5，系统版本为4.4。 2.Android源码编译编译目标设备：Nexus5 编译环境：Ubuntu14.04+JDK 1.6 +python 2.7.6 + make 3.81 编译方法官网也有详细介绍：http://source.a">
+<meta name="keywords" content="AOSP - 反调试绕过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android反调试绕过（一）">
+<meta property="og:url" content="http://diamiracle.github.io/2018/08/21/antiDebuggable/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1.简介在做CTF的过程中，经常遇到各种抗调试和反调试的APK保护机制，于是就想自己做一个能绕过所有反调试的ROM，以减少分析反调试方法的时间。实现手机是Nexus5，系统版本为4.4。 2.Android源码编译编译目标设备：Nexus5 编译环境：Ubuntu14.04+JDK 1.6 +python 2.7.6 + make 3.81 编译方法官网也有详细介绍：http://source.a">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-21T14:06:58.192Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android反调试绕过（一）">
+<meta name="twitter:description" content="1.简介在做CTF的过程中，经常遇到各种抗调试和反调试的APK保护机制，于是就想自己做一个能绕过所有反调试的ROM，以减少分析反调试方法的时间。实现手机是Nexus5，系统版本为4.4。 2.Android源码编译编译目标设备：Nexus5 编译环境：Ubuntu14.04+JDK 1.6 +python 2.7.6 + make 3.81 编译方法官网也有详细介绍：http://source.a">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/pace.min.js"></script>
+  
+
+  
+  
+
+</head>
+
+<body>
+  <div id="container">
+      <header id="header">
+    <div id="banner"></div>
+    <div id="header-outer">
+        <div id="header-menu" class="header-menu-pos animated">
+            <div class="header-menu-container">
+                <a href="/" class="left">
+                    <span class="site-title">Diamiracle&#39;s Blog</span>
+                </a>
+                <nav id="header-menu-nav" class="right">
+                    
+                    <a  href="/">
+                        <i class="fa fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    
+                    <a  href="/archives">
+                        <i class="fa fa-archive"></i>
+                        <span>Archives</span>
+                    </a>
+                    
+                    <a  href="/about">
+                        <i class="fa fa-user"></i>
+                        <span>About</span>
+                    </a>
+                    
+                </nav>
+                <a class="mobile-header-menu-button">
+                    <i class="fa fa-bars"></i>
+                </a>
+            </div>
+        </div>
+        <div id="header-row">
+            <div id="logo">
+                <a href="/">
+                    <img src="/images/logo.png" alt="logo">
+                </a>
+            </div>
+            <div class="header-info">
+                <div id="header-title">
+                    
+                    <h2>
+                        Diamiracle&#39;s Blog
+                    </h2>
+                    
+                </div>
+                <div id="header-description">
+                    
+                    <h3>
+                        个人技术分享博客
+                    </h3>
+                    
+                </div>
+            </div>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a title="MinHow" target="_blank" href="//minhow.com">
+                            <i class="fa fa-home fa-2x"></i></a>
+                    
+                        <a title="Github" target="_blank" href="//github.com/wongminho">
+                            <i class="fa fa-github fa-2x"></i></a>
+                    
+                        <a title="Weibo" target="_blank" href="//weibo.com/WongMinHo">
+                            <i class="fa fa-weibo fa-2x"></i></a>
+                    
+                        <a title="Twitter" target="_blank" href="//twitter.com/huangminhow">
+                            <i class="fa fa-twitter fa-2x"></i></a>
+                    
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+      <div class="outer">
+        <section id="main" class="body-wrap"><article id="post-antiDebuggable" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="post-title" itemprop="name">
+      Android反调试绕过（一）
+    </h1>
+    <div class="post-title-bar">
+      <ul>
+          
+        <li>
+          <i class="fa fa-calendar"></i>  2018-08-21
+        </li>
+        <li>
+          <i class="fa fa-eye"></i>
+          <span id="busuanzi_value_page_pv"></span>
+        </li>
+      </ul>
+    </div>
+  
+
+          
+      </header>
+    
+    <div class="article-entry post-content" itemprop="articleBody">
+      
+            
+            <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h1><p>在做CTF的过程中，经常遇到各种抗调试和反调试的APK保护机制，于是就想自己做一个能绕过所有反调试的ROM，以减少分析反调试方法的时间。实现手机是Nexus5，系统版本为4.4。</p>
+<h2 id="2-Android源码编译"><a href="#2-Android源码编译" class="headerlink" title="2.Android源码编译"></a>2.Android源码编译</h2><p>编译目标设备：Nexus5 编译环境：Ubuntu14.04+JDK 1.6 +python 2.7.6 + make 3.81</p>
+<p>编译方法官网也有详细介绍：<a href="http://source.android.com/source/requirements.html。我们需要64位Ubuntu进行编译，并且至少有100G的磁盘空间；选择的源码的版本为4.4.x（Kitkat）。" target="_blank" rel="noopener">http://source.android.com/source/requirements.html。我们需要64位Ubuntu进行编译，并且至少有100G的磁盘空间；选择的源码的版本为4.4.x（Kitkat）。</a></p>
+<pre><code>make -v                 //可以得到make版本
+java -version         //可以得到java的版本
+python                  //可以得到python的版本
+</code></pre><h2 id="步骤："><a href="#步骤：" class="headerlink" title="步骤："></a>步骤：</h2><h3 id="一、安装依赖项"><a href="#一、安装依赖项" class="headerlink" title="一、安装依赖项"></a>一、安装依赖项</h3><p>官网上面有的（<a href="http://source.android.com/source/initializing.html）摘录如下：" target="_blank" rel="noopener">http://source.android.com/source/initializing.html）摘录如下：</a></p>
+<pre><code>$ sudo apt-get install git-core gnupg flex bison gperf build-essential \
+zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 \
+lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev ccache \
+libgl1-mesa-dev libxml2-utils xsltproc unzip
+</code></pre><h3 id="二、选择源码分支"><a href="#二、选择源码分支" class="headerlink" title="二、选择源码分支"></a>二、选择源码分支</h3><p>可以通过<a href="http://source.android.com/source/build-numbers.html来查询自己的设备对应哪个源码分支，我们选择的分支的build号为：KTU84P。" target="_blank" rel="noopener">http://source.android.com/source/build-numbers.html来查询自己的设备对应哪个源码分支，我们选择的分支的build号为：KTU84P。</a></p>
+<pre><code>KTU84P     android-4.4.4_r1    KitKat  Nexus 5, Nexus 7 (flo/deb/grouper/tilapia), Nexus 4, Nexus 10
+</code></pre><h3 id="三、根据build号找到对应的设备驱动并下载"><a href="#三、根据build号找到对应的设备驱动并下载" class="headerlink" title="三、根据build号找到对应的设备驱动并下载"></a>三、根据build号找到对应的设备驱动并下载</h3><p>可以在<a href="https://developers.google.com/android/nexus/drivers#hikey中找到对应设备与源码分支的硬件驱动。得到三个tgz文件，依次解压得到三个shell脚本文件，将其置于源码根目录中。依次执行三个脚本生成驱动。" target="_blank" rel="noopener">https://developers.google.com/android/nexus/drivers#hikey中找到对应设备与源码分支的硬件驱动。得到三个tgz文件，依次解压得到三个shell脚本文件，将其置于源码根目录中。依次执行三个脚本生成驱动。</a></p>
+<pre><code>注：需要一步一步得往下读，并输入“I ACCEPT”
+</code></pre><h3 id="四、编译"><a href="#四、编译" class="headerlink" title="四、编译"></a>四、编译</h3><p>编译时可以使用编译器高速缓存工具complier cache（ccache）来加快编译速度。依次执行：</p>
+<pre><code>export USE_CCACHE=1
+prebuilts/misc/linux-x86/ccache/ccache -M 50G
+</code></pre><p>初始化编译环境</p>
+<pre><code>. build/envsetup.sh
+
+lunch
+</code></pre><p>选择编译的系统模式，我们选择userdebug模式，即：aosp_hammerhead_userdebug</p>
+<pre><code>make -j16
+</code></pre><p>等待几个小时就可以编译完成，最后生成一个out目录，编译的结果就放在里面。</p>
+<h3 id="五、刷机"><a href="#五、刷机" class="headerlink" title="五、刷机"></a>五、刷机</h3><pre><code>sudo adb reboot bootloader
+fastboot flashall –w  或者 fastboot -w flashall
+</code></pre><h2 id="3-绕过android-debuggable-”false”"><a href="#3-绕过android-debuggable-”false”" class="headerlink" title="3.绕过android:debuggable=”false”"></a>3.绕过android:debuggable=”false”</h2><p>需要用到的工具：</p>
+<pre><code>mkbootimg和unpackbootimg
+</code></pre><h2 id="步骤：-1"><a href="#步骤：-1" class="headerlink" title="步骤："></a>步骤：</h2><h3 id="一、下载“Google-Nexus-5-谷歌最新官方原厂安卓4-4-4固件”，从这个ROM中提取出boot-img文件。"><a href="#一、下载“Google-Nexus-5-谷歌最新官方原厂安卓4-4-4固件”，从这个ROM中提取出boot-img文件。" class="headerlink" title="一、下载“Google Nexus 5 谷歌最新官方原厂安卓4.4.4固件”，从这个ROM中提取出boot.img文件。"></a>一、下载“Google Nexus 5 谷歌最新官方原厂安卓4.4.4固件”，从这个ROM中提取出boot.img文件。</h3><h3 id="二、boot-img解包"><a href="#二、boot-img解包" class="headerlink" title="二、boot.img解包"></a>二、boot.img解包</h3><p>运行下面的命令将会对boot.img解包，得到boot.img-kernel和boot.img-ramdisk.gz两个文件：</p>
+<pre><code>split-bootimg.pl boot.img
+</code></pre><h3 id="三、处理boot-img-ramdisk-gz"><a href="#三、处理boot-img-ramdisk-gz" class="headerlink" title="三、处理boot.img-ramdisk.gz"></a>三、处理boot.img-ramdisk.gz</h3><p>运行下面的命令，对boot.img-ramdisk.gz进行解压：</p>
+<pre><code>mkdir ramdisk
+cd ramdisk
+gzip -dc ../boot.img-ramdisk.gz | cpio -i
+</code></pre><h3 id="四、修改default-prop，打开系统调试标志"><a href="#四、修改default-prop，打开系统调试标志" class="headerlink" title="四、修改default.prop，打开系统调试标志"></a>四、修改default.prop，打开系统调试标志</h3><p>找到解压出来的default.prop文件，将其中的ro.debuggable=0修改为ro.debuggable=1</p>
+<h3 id="五、ramdisk目录打包"><a href="#五、ramdisk目录打包" class="headerlink" title="五、ramdisk目录打包"></a>五、ramdisk目录打包</h3><p>返回ramdisk的上层目录，输入命令：</p>
+<pre><code>mkbootfs ./ramdisk | gzip &gt; ramdisk.img
+</code></pre><h3 id="六、打包出新的boot-img"><a href="#六、打包出新的boot-img" class="headerlink" title="六、打包出新的boot.img"></a>六、打包出新的boot.img</h3><p>命令：</p>
+<pre><code>mkbootimg --base 0x00000000 --ramdisk_offset 0x02900000 --second_offset 0x00F00000 --tags_offset 0x02700000 --cmdline &apos;console=ttyHSL0 androidboot.hardware=hammerhead user_debug=31 maxcpus=2 msm_watchdog_v2.enable=1 earlyprintk&apos; --kernel boot.img-kernel --ramdisk ramdisk.img -o newboot.img
+</code></pre><h3 id="七、将新的boot-img刷入手机"><a href="#七、将新的boot-img刷入手机" class="headerlink" title="七、将新的boot.img刷入手机"></a>七、将新的boot.img刷入手机</h3><p>这时，在windows下还是linux下就无所谓了。将手机连上电脑输入下面的命令，重启手机进入fastboot：</p>
+<pre><code>adb reboot bootloader
+</code></pre><p>当重启手机后，将新的boot.img刷入手机：</p>
+<pre><code>fastboot flash boot newboot.img
+</code></pre><p>输入成功后重启手机就可以了</p>
+<pre><code>fastboot reboot
+</code></pre>
+            <div class="post-copyright">
+    <div class="content">
+        <p>最后更新： 2018年08月21日 22:06</p>
+        <p>原始链接： <a class="post-url" href="/2018/08/21/antiDebuggable/" title="Android反调试绕过（一）">http://diamiracle.github.io/2018/08/21/antiDebuggable/</a></p>
+        <footer>
+            <a href="http://diamiracle.github.io">
+                <img src="/images/logo.png" alt="John Doe">
+                John Doe
+            </a>
+        </footer>
+    </div>
+</div>
+
+      
+        
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;">赏</a>
+</div>
+
+<div id="reward" class="post-modal reward-lay">
+    <a class="close" href="javascript:;" id="reward-close">×</a>
+    <span class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        请我吃糖~
+        <i class="icon icon-quote-right"></i>
+    </span>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/images/wechat_code.jpg" alt="打赏二维码">
+        </div>
+        <div class="reward-select">
+            
+            <label class="reward-select-item checked" data-id="wechat" data-wechat="/images/wechat_code.jpg">
+                <img class="reward-select-item-wechat" src="/images/wechat.png" alt="微信">
+            </label>
+            
+            
+            <label class="reward-select-item" data-id="alipay" data-alipay="/images/alipay_code.jpg">
+                <img class="reward-select-item-alipay" src="/images/alipay.png" alt="支付宝">
+            </label>
+            
+        </div>
+    </div>
+</div>
+
+
+        
+    </div>
+    <footer class="article-footer">
+        
+        
+<div class="post-share">
+    <a href="javascript:;" id="share-sub" class="post-share-fab">
+        <i class="fa fa-share-alt"></i>
+    </a>
+    <div class="post-share-list" id="share-list">
+        <ul class="share-icons">
+          <li>
+            <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://diamiracle.github.io/2018/08/21/antiDebuggable/&title=《Android反调试绕过（一）》 — Hexo&pic=images/banner.jpg" data-title="微博">
+              <i class="fa fa-weibo"></i>
+            </a>
+          </li>
+          <li>
+            <a class="weixin share-sns" id="wxFab" href="javascript:;" data-title="微信">
+              <i class="fa fa-weixin"></i>
+            </a>
+          </li>
+          <li>
+            <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://diamiracle.github.io/2018/08/21/antiDebuggable/&title=《Android反调试绕过（一）》 — Hexo&source=" data-title="QQ">
+              <i class="fa fa-qq"></i>
+            </a>
+          </li>
+          <li>
+            <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://diamiracle.github.io/2018/08/21/antiDebuggable/" data-title="Facebook">
+              <i class="fa fa-facebook"></i>
+            </a>
+          </li>
+          <li>
+            <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Android反调试绕过（一）》 — Hexo&url=http://diamiracle.github.io/2018/08/21/antiDebuggable/&via=http://diamiracle.github.io" data-title="Twitter">
+              <i class="fa fa-twitter"></i>
+            </a>
+          </li>
+          <li>
+            <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://diamiracle.github.io/2018/08/21/antiDebuggable/" data-title="Google+">
+              <i class="fa fa-google-plus"></i>
+            </a>
+          </li>
+        </ul>
+     </div>
+</div>
+<div class="post-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;" id="wxShare-close">×</a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://diamiracle.github.io/2018/08/21/antiDebuggable/" alt="微信分享二维码">
+</div>
+
+<div class="mask"></div>
+
+        
+        <ul class="article-footer-menu">
+            
+            
+  <li class="article-footer-tags">
+    <i class="fa fa-tags"></i>
+      
+    <a href="/tags/AOSP-反调试绕过/" class="color3">AOSP - 反调试绕过</a>
+      
+  </li>
+
+        </ul>
+        
+    </footer>
+  </div>
+</article>
+
+
+    <aside class="post-toc-pos post-toc-top" id="post-toc">
+        <nav class="post-toc-wrap">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#1-简介"><span class="post-toc-text">1.简介</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-Android源码编译"><span class="post-toc-text">2.Android源码编译</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#步骤："><span class="post-toc-text">步骤：</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一、安装依赖项"><span class="post-toc-text">一、安装依赖项</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二、选择源码分支"><span class="post-toc-text">二、选择源码分支</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三、根据build号找到对应的设备驱动并下载"><span class="post-toc-text">三、根据build号找到对应的设备驱动并下载</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四、编译"><span class="post-toc-text">四、编译</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#五、刷机"><span class="post-toc-text">五、刷机</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-绕过android-debuggable-”false”"><span class="post-toc-text">3.绕过android:debuggable=”false”</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#步骤：-1"><span class="post-toc-text">步骤：</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一、下载“Google-Nexus-5-谷歌最新官方原厂安卓4-4-4固件”，从这个ROM中提取出boot-img文件。"><span class="post-toc-text">一、下载“Google Nexus 5 谷歌最新官方原厂安卓4.4.4固件”，从这个ROM中提取出boot.img文件。</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二、boot-img解包"><span class="post-toc-text">二、boot.img解包</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#三、处理boot-img-ramdisk-gz"><span class="post-toc-text">三、处理boot.img-ramdisk.gz</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#四、修改default-prop，打开系统调试标志"><span class="post-toc-text">四、修改default.prop，打开系统调试标志</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#五、ramdisk目录打包"><span class="post-toc-text">五、ramdisk目录打包</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#六、打包出新的boot-img"><span class="post-toc-text">六、打包出新的boot.img</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#七、将新的boot-img刷入手机"><span class="post-toc-text">七、将新的boot.img刷入手机</span></a></li></ol></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+
+<nav id="article-nav">
+  
+    <a href="/2018/08/21/antiDebuggable1/" id="article-nav-newer" class="article-nav-link-wrap">
+
+      <span class="article-nav-title">
+        <i class="fa fa-hand-o-left" aria-hidden="true"></i>
+        
+          Android反调试绕过（二）
+        
+      </span>
+    </a>
+  
+  
+    <a href="/2018/08/20/Where/" id="article-nav-older" class="article-nav-link-wrap">
+      <span class="article-nav-title">Where解题思路</span>
+      <i class="fa fa-hand-o-right" aria-hidden="true"></i>
+    </a>
+  
+</nav>
+
+
+
+    
+</section>
+        
+      </div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+    </div>
+  </div>
+</footer>
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script>
+  var mihoConfig = {
+      root: "http://diamiracle.github.io",
+      animate: true,
+      isHome: false,
+      share: true,
+      reward: 1
+  }
+</script>
+<div class="sidebar">
+    <div id="sidebar-search" title="Search">
+        <i class="fa fa-search"></i>
+    </div>
+    <div id="sidebar-category" title="Categories">
+        <i class="fa fa-book"></i>
+    </div>
+    <div id="sidebar-tag" title="Tags">
+        <i class="fa fa-tags"></i>
+    </div>
+    <div id="sidebar-top">
+        <span class="sidebar-top-icon"><i class="fa fa-angle-up"></i></span>
+    </div>
+</div>
+<div class="sidebar-menu-box" id="sidebar-menu-box">
+    <div class="sidebar-menu-box-container">
+        <div id="sidebar-menu-box-categories">
+            
+        </div>
+        <div id="sidebar-menu-box-tags">
+            <a href="/tags/AOSP-反调试绕过/" style="font-size: 20px;">AOSP - 反调试绕过</a> <a href="/tags/DEX-file-脱壳方法/" style="font-size: 10px;">DEX file - 脱壳方法</a> <a href="/tags/Pyinstall-反编译为python/" style="font-size: 10px;">Pyinstall - 反编译为python</a> <a href="/tags/zip-伪加密/" style="font-size: 10px;">zip - 伪加密</a>
+        </div>
+    </div>
+    <a href="javascript:;" class="sidebar-menu-box-close">&times;</a>
+</div>
+<div class="mobile-header-menu-nav" id="mobile-header-menu-nav">
+    <div class="mobile-header-menu-container">
+        <span class="title">Menus</span>
+        <ul class="mobile-header-menu-navbar">
+            
+            <li>
+                <a  href="/">
+                    <i class="fa fa-home"></i><span>Home</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/archives">
+                    <i class="fa fa-archive"></i><span>Archives</span>
+                </a>
+            </li>
+            
+            <li>
+                <a  href="/about">
+                    <i class="fa fa-user"></i><span>About</span>
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+    <div class="mobile-header-tag-container">
+        <span class="title">Tags</span>
+        <div id="mobile-header-container-tags">
+            <a href="/tags/AOSP-反调试绕过/" style="font-size: 20px;">AOSP - 反调试绕过</a> <a href="/tags/DEX-file-脱壳方法/" style="font-size: 10px;">DEX file - 脱壳方法</a> <a href="/tags/Pyinstall-反编译为python/" style="font-size: 10px;">Pyinstall - 反编译为python</a> <a href="/tags/zip-伪加密/" style="font-size: 10px;">zip - 伪加密</a>
+        </div>
+    </div>
+</div>
+<div class="search-wrap">
+    <span class="search-close">&times;</span>
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+            <i class="icon icon-lg icon-chevron-left"></i>
+        </a>
+        <input class="search-field" placeholder="Search..." id="keywords">
+        <a id="search-submit" href="javascript:;">
+            <i class="fa fa-search"></i>
+        </a>
+    <div class="search-container" id="search-container">
+        <ul class="search-result" id="search-result">
+        </ul>
+    </div>
+</div>
+
+<div id="search-tpl">
+    <li class="search-result-item">
+        <a href="{url}" class="search-item-li">
+            <span class="search-item-li-title" title="{title}">{title}</span>
+        </a>
+    </li>
+</div>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+  <script src="//cdn.bootcss.com/particles.js/2.0.0/particles.min.js"></script>
+  <div id="particles"></div>
+  <script src="/js/particles.js"></script>
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  <script src="//cdn.bootcss.com/scrollReveal.js/3.0.5/scrollreveal.js"></script>
+  <script src="/js/animate.js"></script>
+
+
+  <script src="/js/pop-img.js"></script>
+  <script>
+     $(".article-entry p img").popImg();
+  </script>
+
+  </div>
+</body>
+</html>
